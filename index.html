@@ -1,90 +1,94 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>FFXIVSim</title>
-    <link rel="shortcut icon" href="style/favicon.ico">
-    <link rel="stylesheet" href="style/style.css">
-  </head>
-  <body>
-    <div id="container">
-      <canvas id="canvas" tabindex="-1"></canvas>
-      <div id="loading">
-		<div id="progress-container">
-            <div id="progress"></div>
-            <div id="progress-overlay"></div>
-        </div>
-      </div>
-      <div id="warning"> </div>
-    </div>
-    <script>
-      var canvas = document.querySelector("#canvas");
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>FFXIVSim</title>
+	<link rel="shortcut icon" href="style/favicon.ico">
+	<link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+	<div id="container">
+		<canvas id="canvas" tabindex="-1"></canvas>
+		<div id="loading">
+			<div id="progress-container">
+				<div id="progress"></div>
+				<div id="progress-overlay"></div>
+			</div>
+		</div>
+		<div id="status"> </div>
+	</div>
+	<script>
+	var canvas = document.querySelector("#canvas");
 	  
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') {
-			div.style = 'background: red; padding: 10px;';
-        } else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
-	  
-      var loaderUrl = "data/Build.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: "data/Build.data.unityweb",
+	function unityShowBanner(msg, type) {
+		var warningBanner = document.querySelector("#status");
+		function updateBannerVisibility() {
+			warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+		}
+		var div = document.createElement('div');
+		div.innerHTML = msg;
+		warningBanner.appendChild(div);
+		if (type == 'error') {
+			warningBanner.style = 'background-color: #BB0000;';
+		} else {
+			if (type == 'warning') {
+				warningBanner.style = 'background-color: #BB6600;';
+			} else {
+				warningBanner.style = 'background-color: #00BB00;';
+			}
+			setTimeout(function() {
+				warningBanner.removeChild(div);
+				updateBannerVisibility();
+			}, 5000);
+		}
+		updateBannerVisibility();
+	}
+	
+	var loaderUrl = "data/Build.loader.js";
+	var config = {
+		arguments: [],
+		dataUrl: "data/Build.data.unityweb",
 		workerUrl: "data/Build.data.unityweb",
-        frameworkUrl: "data/Build.framework.js.unityweb",
-        codeUrl: "data/Build.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Pyon",
-        productName: "FFXIVSim",
-        productVersion: "0.1.0",
-        showBanner: unityShowBanner,
+		frameworkUrl: "data/Build.framework.js.unityweb",
+		codeUrl: "data/Build.wasm.unityweb",
+		streamingAssetsUrl: "StreamingAssets",
+		companyName: "Pyon",
+		productName: "FFXIVSim",
+		productVersion: "0.1.0",
+		showBanner: unityShowBanner,
 		autoSyncPersistentDataPath: true,
 		//matchWebGLToCanvasSize: false, //Unsync size of WebGL render target & dom element
 		//devicePixelRatio: 1, //Lower canvas resolution on high DPI displays for performance
-      };
-	  
-	  var meta = document.createElement('meta');
-	  meta.name = 'viewport';
-	  meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-	  document.getElementsByTagName('head')[0].appendChild(meta);
+	};
+	
+	var meta = document.createElement('meta');
+	meta.name = 'viewport';
+	meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+	document.getElementsByTagName('head')[0].appendChild(meta);
+	
+	canvas.style.width = window.innerWidth;
+	canvas.style.height = window.innerHeight;
 
-	  canvas.style.width = window.innerWidth;
-	  canvas.style.height = window.innerHeight;
-
-      document.querySelector("#loading").style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
+	document.querySelector("#loading").style.display = "block";
+	
+	var script = document.createElement("script");
+	script.src = loaderUrl;
+	script.onload = () => {
+		createUnityInstance(canvas, config, (progress) => {
 			let clipValue = 100 - (100 * progress);
 			document.querySelector("#progress-overlay").style.clipPath = `inset(${clipValue}% 0 0 0)`;
-              }).then((unityInstance) => {
-                document.querySelector("#loading").style.display = "none";
-                //document.querySelector("#fullscreen-button").onclick = () => {
-                //  unityInstance.SetFullscreen(1);
-                //};
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-			
-      document.body.appendChild(script);
-    </script>
-  </body>
+		}).then((unityInstance) => {
+			document.querySelector("#loading").style.display = "none";
+			//document.querySelector("#fullscreen-button").onclick = () => {
+			//	unityInstance.SetFullscreen(1);
+			//};
+		}).catch((message) => {
+			alert(message);
+		});
+	};
+	
+	document.body.appendChild(script);
+	</script>
+</body>
 </html>
