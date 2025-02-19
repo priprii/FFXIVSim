@@ -45,21 +45,21 @@
         }
         updateBannerVisibility();
       }
-
-      var buildUrl = "data";
-      var loaderUrl = buildUrl + "/Build.loader.js";
+	  
+      var loaderUrl = "data/Build.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/Build.data.unityweb",
-        frameworkUrl: buildUrl + "/Build.framework.js.unityweb",
-        codeUrl: buildUrl + "/Build.wasm.unityweb",
+        dataUrl: "data/Build.data.unityweb",
+		workerUrl: "data/Build.data.unityweb",
+        frameworkUrl: "data/Build.framework.js.unityweb",
+        codeUrl: "data/Build.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Pyon",
         productName: "FFXIVSim",
         productVersion: "0.1.0",
         showBanner: unityShowBanner,
       };
-
+	  
       // By default, Unity keeps WebGL canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
       // Set this to false if you want to decouple this synchronization from
