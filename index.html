@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
 	<title>FFXIVSim</title>
 	<link rel="shortcut icon" href="style/favicon.ico">
 	<link rel="stylesheet" href="style/style.css">
@@ -10,39 +11,44 @@
 <body>
 	<div id="container">
 		<canvas id="canvas" tabindex="-1"></canvas>
-		<div id="loading">
+		<div id="loading" style="display: block;">
 			<div id="progress-container">
 				<div id="progress"></div>
-				<div id="progress-overlay"></div>
+				<div id="progress-overlay" style="display: none;"></div>
 			</div>
 		</div>
 		<div id="status"> </div>
 	</div>
 	<script>
 	var canvas = document.querySelector("#canvas");
+	canvas.style.width = window.innerWidth;
+	canvas.style.height = window.innerHeight;
 	  
-	function unityShowBanner(msg, type) {
-		var warningBanner = document.querySelector("#status");
-		function updateBannerVisibility() {
-			warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-		}
-		var div = document.createElement('div');
-		div.innerHTML = msg;
-		warningBanner.appendChild(div);
+	function StatusMessage(msg, type) {
+		var divStatus = document.querySelector("#status");
+		divStatus.innerHTML = '';
+		
+		var divStatusText = document.createElement('div');
+		divStatusText.innerHTML = msg;
+		divStatus.appendChild(divStatusText);
+		
 		if (type == 'error') {
-			warningBanner.style = 'background-color: #BB0000;';
+			divStatus.style = 'background-color: #BB0000;';
 		} else {
 			if (type == 'warning') {
-				warningBanner.style = 'background-color: #BB6600;';
+				divStatus.style = 'background-color: #BB6600;';
 			} else {
-				warningBanner.style = 'background-color: #00BB00;';
+				divStatus.style = 'background-color: #00BB00;';
 			}
+			
 			setTimeout(function() {
-				warningBanner.removeChild(div);
-				updateBannerVisibility();
+				if(!divStatus.contains(divStatusText)) { return; }
+				divStatus.removeChild(divStatusText);
+				divStatus.style.display = 'none';
 			}, 5000);
 		}
-		updateBannerVisibility();
+		
+		divStatus.style.display = 'block';
 	}
 	
 	var loaderUrl = "data/Build.loader.js";
@@ -56,25 +62,17 @@
 		companyName: "Pyon",
 		productName: "FFXIVSim",
 		productVersion: "0.1.0",
-		showBanner: unityShowBanner,
+		showBanner: StatusMessage,
 		autoSyncPersistentDataPath: true,
 		//matchWebGLToCanvasSize: false, //Unsync size of WebGL render target & dom element
 		//devicePixelRatio: 1, //Lower canvas resolution on high DPI displays for performance
 	};
 	
-	var meta = document.createElement('meta');
-	meta.name = 'viewport';
-	meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-	document.getElementsByTagName('head')[0].appendChild(meta);
-	
-	canvas.style.width = window.innerWidth;
-	canvas.style.height = window.innerHeight;
-
-	document.querySelector("#loading").style.display = "block";
-	
 	var script = document.createElement("script");
 	script.src = loaderUrl;
 	script.onload = () => {
+		document.querySelector("#progress-overlay").style.display = "block";
+		
 		createUnityInstance(canvas, config, (progress) => {
 			let clipValue = 100 - (100 * progress);
 			document.querySelector("#progress-overlay").style.clipPath = `inset(${clipValue}% 0 0 0)`;
