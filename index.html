@@ -10,10 +10,10 @@
   <body>
     <div id="container">
       <canvas id="canvas" tabindex="-1"></canvas>
-      <div id="loading-bar">
-        <div id="progress-anim"></div>
-        <div id="progress-bar-empty">
-          <div id="progress-bar-full"></div>
+      <div id="loading">
+		<div id="progress-container">
+            <div id="progress"></div>
+            <div id="progress-overlay"></div>
         </div>
       </div>
       <div id="warning"> </div>
@@ -66,15 +66,16 @@
 	  canvas.style.width = window.innerWidth;
 	  canvas.style.height = window.innerHeight;
 
-      document.querySelector("#loading-bar").style.display = "block";
+      document.querySelector("#loading").style.display = "block";
 
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#progress-bar-full").style.width = 100 * progress + "%";
+			let clipValue = 100 - (100 * progress);
+			document.querySelector("#progress-overlay").style.clipPath = `inset(${clipValue}% 0 0 0)`;
               }).then((unityInstance) => {
-                document.querySelector("#loading-bar").style.display = "none";
+                document.querySelector("#loading").style.display = "none";
                 //document.querySelector("#fullscreen-button").onclick = () => {
                 //  unityInstance.SetFullscreen(1);
                 //};
